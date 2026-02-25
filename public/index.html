@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DHR Leads — Painel Completo</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#06080d;--bg2:#0c1017;--card:#111827;--card2:#161f2e;
+  --border:#1e2a3a;--border2:#2a3a52;
+  --text:#e2e8f0;--dim:#64748b;--dim2:#475569;
+  --green:#10b981;--green2:#059669;--green-bg:rgba(16,185,129,.08);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.08);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,.08);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,.08);
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,.08);
+  --cyan:#06b6d4;--cyan-bg:rgba(6,182,212,.08);
+}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* ══════ HEADER ══════ */
+.header{
+  background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%);
+  border-bottom:1px solid var(--border);
+  padding:20px 28px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);
+}
+.header h1{font-size:20px;font-weight:700;letter-spacing:-.5px;display:flex;align-items:center;gap:10px}
+.header h1 span{color:var(--green);font-family:'JetBrains Mono',monospace;font-size:14px;background:var(--green-bg);padding:3px 10px;border-radius:6px;border:1px solid rgba(16,185,129,.2)}
+.header-actions{display:flex;gap:8px;align-items:center}
+.header-info{font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace}
+
+/* ══════ STATS ══════ */
+.stats-bar{
+  display:flex;gap:1px;background:var(--border);margin:0;overflow-x:auto;
+}
+.stat-item{
+  flex:1;min-width:130px;background:var(--bg2);padding:16px 20px;
+  display:flex;flex-direction:column;gap:2px;
+}
+.stat-item:first-child{padding-left:28px}
+.stat-item:last-child{padding-right:28px}
+.stat-label{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.stat-val{font-size:22px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.sv-g{color:var(--green)}.sv-b{color:var(--blue)}.sv-r{color:var(--red)}.sv-a{color:var(--amber)}.sv-p{color:var(--purple)}
+
+/* ══════ CONTENT ══════ */
+.content{padding:24px 28px}
+
+/* ══════ TABS ══════ */
+.tabs{display:flex;gap:2px;margin-bottom:20px;background:var(--card);border-radius:12px;padding:4px;border:1px solid var(--border);width:fit-content}
+.tab{
+  padding:8px 20px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;
+  color:var(--dim);background:transparent;border:none;font-family:inherit;
+  transition:all .2s;
+}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--green);background:var(--green-bg);font-weight:600}
+
+/* ══════ TOOLBAR ══════ */
+.toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.search-box{
+  position:relative;flex:0 0 300px;
+}
+.search-box input{
+  width:100%;padding:9px 14px 9px 36px;border-radius:8px;border:1px solid var(--border);
+  background:var(--card);color:var(--text);font-size:13px;font-family:inherit;
+  transition:border-color .2s;
+}
+.search-box input:focus{outline:none;border-color:var(--green)}
+.search-box::before{content:'🔍';position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px}
+
+.filter-chips{display:flex;gap:4px}
+.chip{
+  padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;
+  border:1px solid var(--border);background:transparent;color:var(--dim);
+  font-family:inherit;transition:all .2s;white-space:nowrap;
+}
+.chip:hover,.chip.on{border-color:var(--green);color:var(--green);background:var(--green-bg)}
+
+/* ══════ BUTTONS ══════ */
+.btn{
+  padding:8px 16px;border-radius:8px;border:none;font-size:13px;font-weight:600;
+  cursor:pointer;font-family:inherit;transition:all .2s;display:inline-flex;align-items:center;gap:6px;
+  white-space:nowrap;
+}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-primary{background:var(--green);color:#fff}
+.btn-primary:hover:not(:disabled){background:var(--green2);transform:translateY(-1px)}
+.btn-secondary{background:var(--card2);color:var(--dim);border:1px solid var(--border)}
+.btn-secondary:hover:not(:disabled){color:var(--text);border-color:var(--border2)}
+.btn-danger{background:var(--red-bg);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.btn-danger:hover:not(:disabled){background:rgba(239,68,68,.15)}
+.btn-blue{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(59,130,246,.2)}
+.btn-blue:hover:not(:disabled){background:rgba(59,130,246,.15)}
+.btn-purple{background:var(--purple-bg);color:var(--purple);border:1px solid rgba(139,92,246,.2)}
+.btn-purple:hover:not(:disabled){background:rgba(139,92,246,.15)}
+.btn-amber{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,158,11,.2)}
+.btn-amber:hover:not(:disabled){background:rgba(245,158,11,.15)}
+.btn-sm{padding:4px 10px;font-size:11px}
+
+/* ══════ TABLE ══════ */
+.table-wrap{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;
+}
+table{width:100%;border-collapse:collapse}
+th{
+  padding:10px 14px;text-align:left;font-size:10px;color:var(--dim);text-transform:uppercase;
+  letter-spacing:.8px;font-weight:600;background:var(--card2);border-bottom:1px solid var(--border);
+  position:sticky;top:0;
+}
+td{padding:10px 14px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.03)}
+tr:hover td{background:rgba(255,255,255,.015)}
+tr.selected td{background:var(--green-bg) !important}
+
+.ok{color:var(--green)}.nok{color:var(--red)}.empty{color:var(--dim)}
+.mono{font-family:'JetBrains Mono',monospace;font-size:11px}
+.wa-link{color:var(--green);text-decoration:none;font-size:12px}.wa-link:hover{text-decoration:underline}
+
+.tag{display:inline-block;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:600}
+.tag-g{background:var(--green-bg);color:var(--green);border:1px solid rgba(16,185,129,.2)}
+.tag-a{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,158,11,.2)}
+.tag-r{background:var(--red-bg);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.tag-b{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(59,130,246,.2)}
+
+/* ══════ CHECKBOX ══════ */
+.cb{width:16px;height:16px;cursor:pointer;accent-color:var(--green)}
+
+/* ══════ SELECTION BAR ══════ */
+.sel-bar{
+  position:fixed;bottom:0;left:0;right:0;
+  background:linear-gradient(180deg,rgba(6,8,13,0) 0%,var(--bg) 20%);
+  padding:20px 28px 24px;display:none;z-index:90;
+}
+.sel-bar.show{display:block}
+.sel-inner{
+  background:linear-gradient(135deg,#1e293b,#1e1b4b);
+  border:1px solid var(--border2);border-radius:14px;padding:14px 20px;
+  display:flex;align-items:center;gap:12px;justify-content:space-between;
+  box-shadow:0 -8px 40px rgba(0,0,0,.5);
+  max-width:1200px;margin:0 auto;
+}
+.sel-count{font-size:14px;font-weight:600;color:var(--green);white-space:nowrap}
+
+/* ══════ PANELS ══════ */
+.panel{display:none}.panel.on{display:block}
+
+/* ══════ PAGINATION ══════ */
+.pagination{display:flex;gap:8px;align-items:center;margin-top:14px;justify-content:center}
+.page-info{font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace}
+
+/* ══════ LOG ══════ */
+.log-box{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  max-height:500px;overflow-y:auto;padding:8px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+}
+.log-box div{padding:4px 8px;border-bottom:1px solid rgba(255,255,255,.025)}
+.log-box .t{color:var(--dim);margin-right:8px}
+
+/* ══════ MODAL ══════ */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;
+  display:none;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);
+}
+.modal-overlay.show{display:flex}
+.modal{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  width:90%;max-width:700px;max-height:80vh;overflow-y:auto;padding:28px;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+.modal h2{font-size:18px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.modal-close{
+  position:absolute;top:16px;right:16px;background:none;border:none;color:var(--dim);
+  font-size:20px;cursor:pointer;
+}
+
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;color:var(--dim);margin-bottom:4px;font-weight:500}
+.form-group input,.form-group select{
+  width:100%;padding:9px 14px;border-radius:8px;border:1px solid var(--border);
+  background:var(--bg2);color:var(--text);font-size:13px;font-family:inherit;
+}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--green)}
+
+/* ══════ RESULT CARDS ══════ */
+.result-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:16px;margin-top:12px;
+}
+.result-card h3{font-size:14px;margin-bottom:10px;color:var(--green)}
+.result-row{display:flex;justify-content:space-between;padding:4px 0;font-size:13px;border-bottom:1px solid rgba(255,255,255,.03)}
+.result-row:last-child{border:none}
+.result-key{color:var(--dim)}
+.result-val{font-weight:600;font-family:'JetBrains Mono',monospace;font-size:12px}
+.fipe-val{font-size:22px;font-weight:800;color:var(--green);margin:12px 0;font-family:'JetBrains Mono',monospace}
+
+/* ══════ TOAST ══════ */
+.toast{
+  position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:10px;
+  font-size:13px;font-weight:500;z-index:999;animation:si .3s;
+  border:1px solid;backdrop-filter:blur(12px);
+}
+.toast-ok{background:rgba(5,150,105,.9);color:#a7f3d0;border-color:rgba(16,185,129,.3)}
+.toast-err{background:rgba(185,28,28,.9);color:#fca5a5;border-color:rgba(239,68,68,.3)}
+.toast-info{background:rgba(30,58,138,.9);color:#93c5fd;border-color:rgba(59,130,246,.3)}
+@keyframes si{from{transform:translateY(-20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* ══════ LOADING ══════ */
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--green);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.loading-overlay{
+  position:fixed;inset:0;background:rgba(6,8,13,.8);z-index:300;
+  display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;
+  backdrop-filter:blur(4px);
+}
+.loading-overlay.show{display:flex}
+.loading-overlay .spinner{width:32px;height:32px;border-width:3px}
+.loading-text{color:var(--dim);font-size:14px}
+
+/* ══════ EMPTY STATE ══════ */
+.empty-state{text-align:center;padding:60px 20px;color:var(--dim)}
+.empty-state .icon{font-size:48px;margin-bottom:12px}
+.empty-state h3{font-size:16px;color:var(--text);margin-bottom:8px}
+.empty-state p{font-size:13px;margin-bottom:20px}
+
+/* ══════ FILTER BAR AVANÇADO ══════ */
+.adv-filters{
+  display:none;gap:10px;flex-wrap:wrap;align-items:center;
+  padding:12px 16px;background:var(--card2);border-radius:10px;margin-bottom:14px;
+  border:1px solid var(--border);
+}
+.adv-filters.show{display:flex}
+.adv-filters label{font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.adv-filters input,.adv-filters select{
+  padding:6px 10px;border-radius:6px;border:1px solid var(--border);
+  background:var(--bg2);color:var(--text);font-size:12px;font-family:inherit;
+  width:140px;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--border2)}
+
+.count-bar{font-size:12px;color:var(--dim);margin-bottom:8px;font-family:'JetBrains Mono',monospace}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>⚡ DHR Leads <span>v2.0</span></h1>
+  <div class="header-actions">
+    <span class="header-info" id="headerInfo">—</span>
+    <button class="btn btn-primary" onclick="refreshTransactions()">🔄 Buscar Transações</button>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar" id="stats"></div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab on" onclick="showTab('leads',this)">👥 Leads</button>
+    <button class="tab" onclick="showTab('txs',this)">💳 Transações</button>
+    <button class="tab" onclick="showTab('fipe',this)">🚗 FIPE Manual</button>
+    <button class="tab" onclick="showTab('logs',this)">📋 Logs</button>
+  </div>
+
+  <!-- ══════ PAINEL: LEADS ══════ -->
+  <div class="panel on" id="p-leads">
+    <div class="toolbar">
+      <div class="search-box">
+        <input type="text" id="leadQ" placeholder="Buscar nome, email, CPF, telefone..." oninput="debouncedLoadLeads()">
+      </div>
+      <div class="filter-chips">
+        <span class="chip on" onclick="setFilter(this,'')">Todos</span>
+        <span class="chip" onclick="setFilter(this,'valid')">✓ Válidos</span>
+        <span class="chip" onclick="setFilter(this,'whatsapp')">💬 WhatsApp</span>
+        <span class="chip" onclick="setFilter(this,'invalid')">✗ Inválidos</span>
+        <span class="chip" onclick="setFilter(this,'no_phone')">Sem Tel</span>
+      </div>
+      <button class="btn btn-secondary" onclick="toggleAdvFilters()">⚙️ Filtros</button>
+    </div>
+
+    <!-- FILTROS AVANÇADOS -->
+    <div class="adv-filters" id="advFilters">
+      <div>
+        <label>FIPE Mín</label>
+        <input type="text" id="fipeMin" placeholder="Ex: 30000" oninput="applyAdvFilters()">
+      </div>
+      <div>
+        <label>FIPE Máx</label>
+        <input type="text" id="fipeMax" placeholder="Ex: 80000" oninput="applyAdvFilters()">
+      </div>
+      <div>
+        <label>Idade Mín</label>
+        <input type="number" id="idadeMin" placeholder="18" oninput="applyAdvFilters()">
+      </div>
+      <div>
+        <label>Idade Máx</label>
+        <input type="number" id="idadeMax" placeholder="65" oninput="applyAdvFilters()">
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="clearAdvFilters()">Limpar filtros</button>
+    </div>
+
+    <div class="count-bar" id="leadCount"></div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th><input type="checkbox" class="cb" id="selectAllCb" onchange="toggleAll(this)"></th>
+            <th>Nome</th>
+            <th>Telefone</th>
+            <th>Status</th>
+            <th>WhatsApp</th>
+            <th>Documento</th>
+            <th>Compras</th>
+            <th>Gasto</th>
+            <th>CPF Info</th>
+            <th>Placa / Veículo</th>
+            <th>FIPE</th>
+            <th>CRM</th>
+          </tr>
+        </thead>
+        <tbody id="leadTbl"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════ PAINEL: TRANSAÇÕES ══════ -->
+  <div class="panel" id="p-txs">
+    <div class="toolbar">
+      <div class="search-box">
+        <input type="text" id="txQ" placeholder="Buscar..." oninput="debouncedLoadTxs()">
+      </div>
+      <select id="txSt" onchange="loadTxs()" style="padding:9px 14px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-family:inherit">
+        <option value="">Todas</option><option value="paid">Pagas</option><option value="pending">Pendentes</option>
+      </select>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Data</th><th>Nome</th><th>Telefone</th><th>Email</th><th>Produto</th><th>Valor</th><th>Status</th><th>CRM</th></tr></thead>
+        <tbody id="txTbl"></tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <button class="btn btn-secondary btn-sm" onclick="txPage=Math.max(1,txPage-1);loadTxs()">◂ Anterior</button>
+      <span class="page-info" id="txPag"></span>
+      <button class="btn btn-secondary btn-sm" onclick="txPage=Math.min(txTotalPages,txPage+1);loadTxs()">Próxima ▸</button>
+    </div>
+  </div>
+
+  <!-- ══════ PAINEL: FIPE MANUAL ══════ -->
+  <div class="panel" id="p-fipe">
+    <div style="max-width:600px">
+      <h2 style="margin-bottom:20px;font-size:18px">🚗 Consulta FIPE Manual</h2>
+
+      <div style="display:grid;gap:12px">
+        <div class="form-group">
+          <label>Placa do Veículo (opcional — preenche marca/modelo/ano)</label>
+          <div style="display:flex;gap:8px">
+            <input type="text" id="fipePlaca" placeholder="ABC1D23 ou ABC1234" style="flex:1;text-transform:uppercase">
+            <button class="btn btn-blue" onclick="fipeLookupPlaca()">🔍 Buscar Placa</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Marca</label>
+          <input type="text" id="fipeMarca" placeholder="Ex: Volkswagen, Toyota, Fiat...">
+        </div>
+        <div class="form-group">
+          <label>Modelo</label>
+          <input type="text" id="fipeModelo" placeholder="Ex: Gol, Corolla, Uno...">
+        </div>
+        <div class="form-group">
+          <label>Ano</label>
+          <input type="text" id="fipeAno" placeholder="Ex: 2020">
+        </div>
+        <button class="btn btn-primary" onclick="fipeManualSearch()" style="width:100%">🔍 Consultar FIPE</button>
+      </div>
+
+      <div id="fipeManualResult"></div>
+    </div>
+  </div>
+
+  <!-- ══════ PAINEL: LOGS ══════ -->
+  <div class="panel" id="p-logs">
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <button class="btn btn-secondary" onclick="loadLogs()">↻ Atualizar Logs</button>
+    </div>
+    <div class="log-box" id="logBox"></div>
+  </div>
+
+</div>
+
+<!-- SELECTION BAR (BOTTOM) -->
+<div class="sel-bar" id="selBar">
+  <div class="sel-inner">
+    <span class="sel-count" id="selCount">0 selecionados</span>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-purple" onclick="bulkCPF()">🔍 Consultar CPF</button>
+      <button class="btn btn-blue" onclick="openPlacaModal()">🚗 Consultar Placa</button>
+      <button class="btn btn-amber" onclick="bulkFIPE()">📊 Consultar FIPE</button>
+      <button class="btn btn-primary" onclick="bulkSendCRM()">📤 Enviar ao CRM</button>
+      <button class="btn btn-secondary" onclick="clearSelection()">✕ Limpar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: PLACA -->
+<div class="modal-overlay" id="placaModal">
+  <div class="modal" style="position:relative">
+    <button class="modal-close" onclick="closePlacaModal()">✕</button>
+    <h2>🚗 Consultar Placa</h2>
+    <p style="font-size:13px;color:var(--dim);margin-bottom:16px">Digite a placa para cada lead selecionado:</p>
+    <div id="placaInputs"></div>
+    <div style="margin-top:16px;display:flex;gap:8px">
+      <button class="btn btn-primary" onclick="executePlacaLookup()">🔍 Consultar Todas</button>
+      <button class="btn btn-secondary" onclick="closePlacaModal()">Fechar</button>
+    </div>
+    <div id="placaResults"></div>
+  </div>
+</div>
+
+<!-- MODAL: RESULTADO CPF/PLACA/FIPE -->
+<div class="modal-overlay" id="resultModal">
+  <div class="modal" style="position:relative">
+    <button class="modal-close" onclick="closeResultModal()">✕</button>
+    <h2 id="resultModalTitle">Resultados</h2>
+    <div id="resultModalContent"></div>
+    <div style="margin-top:16px">
+      <button class="btn btn-secondary" onclick="closeResultModal()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Carregando...</div>
+</div>
+
+<script>
+// ══════ UTILS ══════
+const $ = id => document.getElementById(id);
+const esc = s => { if(!s)return''; const d=document.createElement('div'); d.textContent=s; return d.innerHTML; };
+const escJS = s => String(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"').replace(/</g,'\\x3c'); // JS-safe for onclick strings
+const fmt = v => 'R$ ' + Number(v).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+const fmtCPF = d => d ? d.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4') : '';
+
+let phoneFilter = '', txPage = 1, txTotalPages = 1;
+let allLeads = []; // Cache dos leads carregados
+let selectedLeads = new Set();
+let enrichedData = {}; // leadId -> {cpf, placa, fipe}
+
+function debounce(fn, ms) {
+  let t;
+  return function(...args) { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+
+// Pre-create debounced versions (fixes: calling debounce() inline creates a new closure every event)
+const debouncedLoadLeads = debounce(loadLeads, 300);
+const debouncedLoadTxs = debounce(loadTxs, 300);
+
+function showLoading(text) {
+  $('loadingText').textContent = text || 'Carregando...';
+  $('loadingOverlay').classList.add('show');
+}
+function hideLoading() { $('loadingOverlay').classList.remove('show'); }
+
+function toast(msg, type='ok') {
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+// ══════ TABS ══════
+function showTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  if (el) el.classList.add('on');
+  $(`p-${name}`).classList.add('on');
+  // FIX: Only show selection bar on leads tab
+  if (name === 'leads') { updateSelBar(); loadLeads(); }
+  else { $('selBar').classList.remove('show'); }
+  if (name === 'txs') loadTxs();
+  if (name === 'logs') loadLogs();
+}
+
+// ══════ REFRESH ══════
+async function refreshTransactions() {
+  showLoading('Buscando transações da API...');
+  try {
+    const r = await fetch('/api/refresh', { method: 'POST' });
+    const j = await r.json();
+    if (j.success) {
+      toast(`✅ ${j.total} transações carregadas`, 'ok');
+      loadAll();
+    } else {
+      toast(`❌ Erro: ${j.error}`, 'err');
+    }
+  } catch (e) {
+    toast(`❌ Erro: ${e.message}`, 'err');
+  }
+  hideLoading();
+}
+
+// ══════ STATS ══════
+async function loadStats() {
+  try {
+    const s = await (await fetch('/api/stats')).json();
+    $('headerInfo').textContent = `${s.total} txs | ${s.crmSent} enviados`;
+    $('stats').innerHTML = `
+      <div class="stat-item"><div class="stat-label">Transações</div><div class="stat-val sv-b">${s.total}</div></div>
+      <div class="stat-item"><div class="stat-label">Pagas</div><div class="stat-val sv-g">${s.paid}</div></div>
+      <div class="stat-item"><div class="stat-label">Receita</div><div class="stat-val sv-g">${fmt(s.revenue)}</div></div>
+      <div class="stat-item"><div class="stat-label">Leads</div><div class="stat-val sv-b">${s.leads}</div></div>
+      <div class="stat-item"><div class="stat-label">Tel Válidos</div><div class="stat-val sv-g">${s.telValid}</div></div>
+      <div class="stat-item"><div class="stat-label">WhatsApp</div><div class="stat-val sv-g">${s.telWa}</div></div>
+      <div class="stat-item"><div class="stat-label">Enviados CRM</div><div class="stat-val sv-p">${s.crmSent}</div></div>
+    `;
+  } catch(e) {}
+}
+
+// ══════ LEADS ══════
+async function loadLeads() {
+  try {
+    const q = $('leadQ')?.value || '';
+    const leads = await (await fetch(`/api/leads?search=${encodeURIComponent(q)}&phoneFilter=${phoneFilter}`)).json();
+    allLeads = leads;
+    renderLeads(leads);
+  } catch(e) { console.error(e); }
+}
+
+function renderLeads(leads) {
+  // Aplicar filtros avançados
+  let filtered = applyAdvFiltersToLeads(leads);
+
+  $('leadCount').textContent = `${filtered.length} leads${selectedLeads.size ? ` • ${selectedLeads.size} selecionados` : ''}`;
+
+  $('leadTbl').innerHTML = filtered.length ? filtered.map(l => {
+    const id = l.id || l.documento || l.email;
+    const sel = selectedLeads.has(id);
+    const enr = enrichedData[id] || {};
+
+    // CPF info
+    let cpfHtml = '-';
+    if (enr.cpf?.data) {
+      const d = enr.cpf.data;
+      cpfHtml = `<div style="font-size:11px"><b>${esc(d.NOME||'')}</b><br><span class="empty">${esc(d.NASC||'')}</span></div>`;
+    } else if (l.documento) {
+      cpfHtml = `<button class="btn btn-purple btn-sm" onclick="singleCPF('${escJS(id)}','${escJS(l.documento)}')">Consultar</button>`;
+    }
+
+    // Placa/Veículo info
+    let placaHtml = '-';
+    if (enr.placa && !enr.placa.error) {
+      const p = enr.placa;
+      const marca = p.MARCA || p.marca || '';
+      const modelo = p.MODELO || p.modelo || '';
+      const ano = p.ano || p.ANO || '';
+      const placa = p.PLACA || p.placa || enr.placaNum || '';
+      placaHtml = `<div style="font-size:11px">
+        <b>${esc(placa)}</b><br>
+        ${esc(marca)} ${esc(modelo)}<br>
+        <span class="empty">${esc(String(ano))}</span>
+      </div>`;
+    }
+
+    // FIPE info
+    let fipeHtml = '-';
+    if (enr.fipe?.success) {
+      fipeHtml = `<span style="color:var(--green);font-weight:700;font-family:'JetBrains Mono',monospace;font-size:12px">${esc(enr.fipe.valor)}</span>`;
+    } else if (enr.fipe?.error) {
+      fipeHtml = `<span class="nok" style="font-size:10px">${esc(enr.fipe.error).substring(0,30)}</span>`;
+    }
+
+    return `<tr class="${sel?'selected':''}" data-id="${esc(id)}">
+      <td><input type="checkbox" class="cb" ${sel?'checked':''} onchange="toggleLead('${escJS(id)}',this.checked)"></td>
+      <td><b>${esc(l.nome)}</b><br><span class="mono empty">${esc(l.email)}</span></td>
+      <td class="mono">${esc(l.telefone)||esc(l.telefoneRaw)||'<span class="empty">—</span>'}</td>
+      <td>${l.telValido?'<span class="ok">✓ '+l.telMotivo+'</span>':l.telefoneRaw?'<span class="nok">✗ '+l.telMotivo+'</span>':'<span class="empty">sem tel</span>'}</td>
+      <td>${l.whatsapp?`<a class="wa-link" href="https://wa.me/${l.whatsapp}" target="_blank">💬 ${l.whatsapp}</a>`:'—'}</td>
+      <td class="mono">${esc(fmtCPF(l.documento))}</td>
+      <td>${l.comprasPagas}/${l.compras}</td>
+      <td style="color:var(--green);font-weight:600">${fmt(l.totalGasto)}</td>
+      <td>${cpfHtml}</td>
+      <td>${placaHtml}</td>
+      <td>${fipeHtml}</td>
+      <td>${l.sentCRM
+        ? '<span class="tag tag-g">✓ Enviado</span>'
+        : l.paidTxIds?.length
+          ? `<button class="btn btn-primary btn-sm" onclick="sendCRM('${escJS(l.paidTxIds[l.paidTxIds.length-1])}')">📤 Enviar</button>`
+          : '—'}</td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="12"><div class="empty-state"><div class="icon">📭</div><h3>Nenhum lead encontrado</h3><p>Clique em "Buscar Transações" para carregar dados</p></div></td></tr>';
+
+  updateSelBar();
+
+  // Sync "select all" checkbox with actual selection state
+  const selectAllCb = $('selectAllCb');
+  if (selectAllCb) {
+    const visibleIds = filtered.map(l => l.id || l.documento || l.email);
+    selectAllCb.checked = visibleIds.length > 0 && visibleIds.every(id => selectedLeads.has(id));
+  }
+}
+
+function setFilter(el, f) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  phoneFilter = f;
+  loadLeads();
+}
+
+// ══════ ADV FILTERS ══════
+function toggleAdvFilters() {
+  $('advFilters').classList.toggle('show');
+}
+function clearAdvFilters() {
+  $('fipeMin').value = '';
+  $('fipeMax').value = '';
+  $('idadeMin').value = '';
+  $('idadeMax').value = '';
+  renderLeads(allLeads);
+}
+function applyAdvFilters() { renderLeads(allLeads); }
+
+function applyAdvFiltersToLeads(leads) {
+  const fipeMinRaw = $('fipeMin')?.value?.replace(/[.\s]/g,'').replace(',','.') || '';
+  const fipeMaxRaw = $('fipeMax')?.value?.replace(/[.\s]/g,'').replace(',','.') || '';
+  const fipeMin = parseFloat(fipeMinRaw) || 0;
+  const fipeMax = parseFloat(fipeMaxRaw) || 0;
+  const idadeMin = parseInt($('idadeMin')?.value) || 0;
+  const idadeMax = parseInt($('idadeMax')?.value) || 0;
+
+  if (!fipeMin && !fipeMax && !idadeMin && !idadeMax) return leads;
+
+  return leads.filter(l => {
+    const id = l.id || l.documento || l.email;
+    const enr = enrichedData[id] || {};
+
+    // Filtro FIPE
+    if (fipeMin || fipeMax) {
+      if (!enr.fipe?.valor) return false;
+      const fipeVal = parseFloat(enr.fipe.valor.replace(/[^\d,]/g,'').replace(',','.')) || 0;
+      if (fipeMin && fipeVal < fipeMin) return false;
+      if (fipeMax && fipeVal > fipeMax) return false;
+    }
+
+    // Filtro Idade
+    if (idadeMin || idadeMax) {
+      if (!enr.cpf?.data?.NASC) return false;
+      const parts = enr.cpf.data.NASC.split('/');
+      if (parts.length === 3) {
+        const birthDate = new Date(parts[2], parts[1]-1, parts[0]);
+        const age = Math.floor((Date.now() - birthDate) / (365.25*24*60*60*1000));
+        if (idadeMin && age < idadeMin) return false;
+        if (idadeMax && age > idadeMax) return false;
+      } else return false;
+    }
+
+    return true;
+  });
+}
+
+// ══════ SELECTION ══════
+function toggleLead(id, checked) {
+  if (checked) selectedLeads.add(id);
+  else selectedLeads.delete(id);
+  updateSelBar();
+  // FIX: Use attribute loop instead of querySelector to avoid CSS selector breakage with special chars
+  const rows = $('leadTbl').querySelectorAll('tr[data-id]');
+  for (const row of rows) {
+    if (row.dataset.id === id) { row.classList.toggle('selected', checked); break; }
+  }
+  $('leadCount').textContent = `${allLeads.length} leads${selectedLeads.size ? ` • ${selectedLeads.size} selecionados` : ''}`;
+}
+
+function toggleAll(cb) {
+  const rows = $('leadTbl').querySelectorAll('tr[data-id]');
+  rows.forEach(row => {
+    const id = row.dataset.id;
+    const checkbox = row.querySelector('.cb');
+    if (cb.checked) {
+      selectedLeads.add(id);
+      if (checkbox) checkbox.checked = true;
+      row.classList.add('selected');
+    } else {
+      selectedLeads.delete(id);
+      if (checkbox) checkbox.checked = false;
+      row.classList.remove('selected');
+    }
+  });
+  updateSelBar();
+  $('leadCount').textContent = `${allLeads.length} leads${selectedLeads.size ? ` • ${selectedLeads.size} selecionados` : ''}`;
+}
+
+function clearSelection() {
+  selectedLeads.clear();
+  document.querySelectorAll('.cb').forEach(c => c.checked = false);
+  document.querySelectorAll('tr.selected').forEach(r => r.classList.remove('selected'));
+  updateSelBar();
+}
+
+function updateSelBar() {
+  const bar = $('selBar');
+  if (selectedLeads.size > 0) {
+    bar.classList.add('show');
+    $('selCount').textContent = `${selectedLeads.size} lead${selectedLeads.size>1?'s':''} selecionado${selectedLeads.size>1?'s':''}`;
+  } else {
+    bar.classList.remove('show');
+  }
+}
+
+function getSelectedLeadsData() {
+  return allLeads.filter(l => selectedLeads.has(l.id || l.documento || l.email));
+}
+
+// ══════ BULK CPF ══════
+async function bulkCPF() {
+  const leads = getSelectedLeadsData().filter(l => l.documento);
+  if (!leads.length) { toast('Nenhum lead com documento selecionado', 'err'); return; }
+
+  showLoading(`Consultando CPF de ${leads.length} lead(s)...`);
+  let ok = 0, err = 0;
+
+  for (const l of leads) {
+    const id = l.id || l.documento || l.email;
+    try {
+      $('loadingText').textContent = `Consultando CPF... (${ok+err+1}/${leads.length}) ${l.nome}`;
+      const r = await fetch('/api/cpf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cpf: l.documento }),
+      });
+      const data = await r.json();
+      if (!enrichedData[id]) enrichedData[id] = {};
+      enrichedData[id].cpf = data;
+      if (data.error) err++;
+      else ok++;
+    } catch (e) { err++; }
+    await new Promise(r => setTimeout(r, 500));
+  }
+
+  hideLoading();
+  toast(`CPF: ${ok} consultados, ${err} erros`, ok > 0 ? 'ok' : 'err');
+  renderLeads(allLeads);
+}
+
+async function singleCPF(leadId, doc) {
+  showLoading('Consultando CPF...');
+  try {
+    const r = await fetch('/api/cpf', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cpf: doc }),
+    });
+    const data = await r.json();
+    if (!enrichedData[leadId]) enrichedData[leadId] = {};
+    enrichedData[leadId].cpf = data;
+    renderLeads(allLeads);
+    if (data.error) toast(`❌ ${data.error}`, 'err');
+    else toast('✅ CPF consultado', 'ok');
+  } catch (e) { toast(`❌ ${e.message}`, 'err'); }
+  hideLoading();
+}
+
+// ══════ PLACA MODAL ══════
+function openPlacaModal() {
+  const leads = getSelectedLeadsData();
+  if (!leads.length) { toast('Selecione leads primeiro', 'err'); return; }
+
+  $('placaInputs').innerHTML = leads.map(l => {
+    const id = l.id || l.documento || l.email;
+    const existing = enrichedData[id]?.placaNum || '';
+    return `<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+      <span style="flex:0 0 180px;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(l.nome)}</span>
+      <input type="text" class="placa-input" data-lead="${esc(id)}" value="${esc(existing)}"
+        placeholder="ABC1D23" style="flex:1;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:13px;text-transform:uppercase;font-family:'JetBrains Mono',monospace">
+    </div>`;
+  }).join('');
+  $('placaResults').innerHTML = '';
+  $('placaModal').classList.add('show');
+}
+
+function closePlacaModal() { $('placaModal').classList.remove('show'); }
+
+async function executePlacaLookup() {
+  const inputs = document.querySelectorAll('.placa-input');
+  const queries = [];
+  inputs.forEach(inp => {
+    if (inp.value.trim()) {
+      queries.push({ leadId: inp.dataset.lead, placa: inp.value.trim().toUpperCase() });
+    }
+  });
+
+  if (!queries.length) { toast('Digite pelo menos uma placa', 'err'); return; }
+
+  showLoading(`Consultando ${queries.length} placa(s)...`);
+  let resultHtml = '';
+  let ok = 0;
+
+  for (const q of queries) {
+    try {
+      $('loadingText').textContent = `Consultando placa ${q.placa}...`;
+      const r = await fetch('/api/placa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ placa: q.placa }),
+      });
+      const data = await r.json();
+
+      if (!enrichedData[q.leadId]) enrichedData[q.leadId] = {};
+      enrichedData[q.leadId].placa = data;
+      enrichedData[q.leadId].placaNum = q.placa;
+
+      if (!data.error) {
+        ok++;
+        const marca = data.MARCA || data.marca || '';
+        const modelo = data.MODELO || data.modelo || '';
+        const ano = data.ano || data.ANO || '';
+        const cor = data.cor || data.COR || '';
+        resultHtml += `<div class="result-card">
+          <h3>🚗 ${esc(q.placa)}</h3>
+          <div class="result-row"><span class="result-key">Marca</span><span class="result-val">${esc(marca)}</span></div>
+          <div class="result-row"><span class="result-key">Modelo</span><span class="result-val">${esc(modelo)}</span></div>
+          <div class="result-row"><span class="result-key">Ano</span><span class="result-val">${esc(String(ano))}</span></div>
+          <div class="result-row"><span class="result-key">Cor</span><span class="result-val">${esc(cor)}</span></div>
+        </div>`;
+      } else {
+        resultHtml += `<div class="result-card"><h3 style="color:var(--red)">❌ ${esc(q.placa)}</h3><p style="color:var(--dim);font-size:13px">${esc(data.error)}</p></div>`;
+      }
+    } catch (e) {
+      resultHtml += `<div class="result-card"><h3 style="color:var(--red)">❌ ${esc(q.placa)}</h3><p style="color:var(--dim);font-size:13px">${esc(e.message)}</p></div>`;
+    }
+    await new Promise(r => setTimeout(r, 300));
+  }
+
+  hideLoading();
+  $('placaResults').innerHTML = resultHtml;
+  toast(`${ok}/${queries.length} placas consultadas`, ok > 0 ? 'ok' : 'err');
+  renderLeads(allLeads);
+}
+
+// ══════ BULK FIPE ══════
+async function bulkFIPE() {
+  const leads = getSelectedLeadsData();
+  const leadsWithPlaca = leads.filter(l => {
+    const id = l.id || l.documento || l.email;
+    const enr = enrichedData[id];
+    return enr?.placa && !enr.placa.error;
+  });
+
+  if (!leadsWithPlaca.length) {
+    toast('Primeiro consulte a placa dos leads selecionados', 'info');
+    return;
+  }
+
+  showLoading(`Consultando FIPE de ${leadsWithPlaca.length} veículo(s)...`);
+  let ok = 0, err = 0;
+
+  for (const l of leadsWithPlaca) {
+    const id = l.id || l.documento || l.email;
+    const enr = enrichedData[id];
+    const p = enr.placa;
+    const marca = p.MARCA || p.marca || '';
+    const modelo = p.MODELO || p.modelo || '';
+    const ano = p.ano || p.ANO || '';
+
+    if (!marca || !modelo) { err++; continue; }
+
+    try {
+      $('loadingText').textContent = `FIPE: ${marca} ${modelo} ${ano}...`;
+      const r = await fetch('/api/fipe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ marca, modelo, ano: String(ano).split('/')[0] }),
+      });
+      const data = await r.json();
+      enrichedData[id].fipe = data;
+      if (data.success || data.valor) ok++;
+      else err++;
+    } catch (e) {
+      enrichedData[id].fipe = { error: e.message };
+      err++;
+    }
+    await new Promise(r => setTimeout(r, 500));
+  }
+
+  hideLoading();
+  toast(`FIPE: ${ok} consultados, ${err} erros`, ok > 0 ? 'ok' : 'err');
+  renderLeads(allLeads);
+}
+
+// ══════ BULK CRM SEND ══════
+async function bulkSendCRM() {
+  const leads = getSelectedLeadsData().filter(l => l.paidTxIds?.length && !l.sentCRM);
+  if (!leads.length) { toast('Nenhum lead pago não-enviado selecionado', 'err'); return; }
+
+  const txIds = [];
+  leads.forEach(l => {
+    if (l.paidTxIds?.length) txIds.push(l.paidTxIds[l.paidTxIds.length - 1]);
+  });
+
+  showLoading(`Enviando ${txIds.length} lead(s) ao CRM...`);
+  try {
+    const r = await fetch('/api/crm/bulk-send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ txIds }),
+    });
+    const j = await r.json();
+    toast(`CRM: ${j.sent} enviados, ${j.errors} erros`, j.sent > 0 ? 'ok' : 'err');
+    loadAll();
+  } catch (e) {
+    toast(`❌ ${e.message}`, 'err');
+  }
+  hideLoading();
+}
+
+async function sendCRM(id) {
+  showLoading('Enviando ao CRM...');
+  try {
+    const j = await (await fetch(`/api/crm/send/${id}`, { method: 'POST' })).json();
+    if (j.success) toast('✅ Enviado ao CRM', 'ok');
+    else toast(`❌ Erro: ${j.error || j.status}`, 'err');
+    loadAll();
+  } catch(e) { toast(`❌ ${e.message}`, 'err'); }
+  hideLoading();
+}
+
+// ══════ FIPE MANUAL ══════
+async function fipeLookupPlaca() {
+  const placa = $('fipePlaca').value.trim();
+  if (!placa) { toast('Digite a placa', 'err'); return; }
+
+  showLoading('Consultando placa...');
+  try {
+    const r = await fetch('/api/placa', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ placa }),
+    });
+    const data = await r.json();
+    if (data.error) {
+      toast(`❌ ${data.error}`, 'err');
+    } else {
+      $('fipeMarca').value = data.MARCA || data.marca || '';
+      $('fipeModelo').value = data.MODELO || data.modelo || '';
+      const ano = data.ano || data.ANO || '';
+      $('fipeAno').value = String(ano).split('/')[0];
+      toast('✅ Placa encontrada — campos preenchidos', 'ok');
+
+      // Mostrar dados da placa
+      const cor = data.cor || data.COR || '';
+      const municipio = data.MUNICIPIO || data.municipio || '';
+      $('fipeManualResult').innerHTML = `<div class="result-card">
+        <h3>🚗 Dados do Veículo — ${esc(placa.toUpperCase())}</h3>
+        <div class="result-row"><span class="result-key">Marca</span><span class="result-val">${esc(data.MARCA||data.marca||'')}</span></div>
+        <div class="result-row"><span class="result-key">Modelo</span><span class="result-val">${esc(data.MODELO||data.modelo||'')}</span></div>
+        <div class="result-row"><span class="result-key">Ano</span><span class="result-val">${esc(String(ano))}</span></div>
+        <div class="result-row"><span class="result-key">Cor</span><span class="result-val">${esc(cor)}</span></div>
+        <div class="result-row"><span class="result-key">Município</span><span class="result-val">${esc(municipio)}</span></div>
+      </div>`;
+    }
+  } catch (e) { toast(`❌ ${e.message}`, 'err'); }
+  hideLoading();
+}
+
+async function fipeManualSearch() {
+  const marca = $('fipeMarca').value.trim();
+  const modelo = $('fipeModelo').value.trim();
+  const ano = $('fipeAno').value.trim();
+  if (!marca || !modelo) { toast('Preencha marca e modelo', 'err'); return; }
+
+  showLoading('Buscando FIPE...');
+  try {
+    const r = await fetch('/api/fipe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ marca, modelo, ano }),
+    });
+    const data = await r.json();
+    if (data.error) {
+      $('fipeManualResult').innerHTML = `<div class="result-card">
+        <h3 style="color:var(--red)">❌ Erro na consulta FIPE</h3>
+        <p style="color:var(--dim);font-size:13px">${esc(data.error)}</p>
+        ${data.modelosDisponiveis ? `<p style="margin-top:8px;font-size:11px;color:var(--dim)"><b>Modelos disponíveis:</b> ${data.modelosDisponiveis.slice(0,15).map(m=>esc(m)).join(', ')}...</p>` : ''}
+      </div>`;
+      toast(`❌ ${data.error}`, 'err');
+    } else {
+      $('fipeManualResult').innerHTML = `<div class="result-card">
+        <h3>📊 Tabela FIPE</h3>
+        <div class="fipe-val">${esc(data.valor)}</div>
+        <div class="result-row"><span class="result-key">Marca</span><span class="result-val">${esc(data.marca)}</span></div>
+        <div class="result-row"><span class="result-key">Modelo</span><span class="result-val">${esc(data.modelo)}</span></div>
+        <div class="result-row"><span class="result-key">Ano</span><span class="result-val">${esc(String(data.ano))}</span></div>
+        <div class="result-row"><span class="result-key">Combustível</span><span class="result-val">${esc(data.combustivel)}</span></div>
+        <div class="result-row"><span class="result-key">Código FIPE</span><span class="result-val">${esc(data.codigoFipe)}</span></div>
+        <div class="result-row"><span class="result-key">Referência</span><span class="result-val">${esc(data.mesReferencia)}</span></div>
+      </div>`;
+      toast(`✅ FIPE: ${data.valor}`, 'ok');
+    }
+  } catch (e) {
+    $('fipeManualResult').innerHTML = `<div class="result-card"><h3 style="color:var(--red)">❌ Erro</h3><p style="color:var(--dim)">${esc(e.message)}</p></div>`;
+    toast(`❌ ${e.message}`, 'err');
+  }
+  hideLoading();
+}
+
+// ══════ RESULT MODAL ══════
+function closeResultModal() { $('resultModal').classList.remove('show'); }
+
+// ══════ TRANSACTIONS ══════
+async function loadTxs() {
+  try {
+    const q = $('txQ')?.value || '';
+    const st = $('txSt')?.value || '';
+    const j = await (await fetch(`/api/transactions?page=${txPage}&search=${encodeURIComponent(q)}&status=${st}`)).json();
+    const p = j.pagination;
+    txTotalPages = p.totalPages || 1;
+    if (txPage > txTotalPages) txPage = txTotalPages;
+    $('txPag').textContent = `Página ${p.page}/${p.totalPages} (${p.totalRecords} total)`;
+    $('txTbl').innerHTML = j.data.length ? j.data.map(t => {
+      const c = t.customer || {};
+      const stClass = t.status==='paid'?'tag-g':t.status==='waiting_payment'?'tag-a':'tag-r';
+      const stLabel = t.status==='paid'?'Pago':t.status==='waiting_payment'?'Pendente':t.status;
+      return `<tr>
+        <td class="mono empty">${new Date(t.createdAt).toLocaleString('pt-BR')}</td>
+        <td><b>${esc(c.name||'-')}</b></td>
+        <td class="mono">${esc(c.phone||'-')}</td>
+        <td style="font-size:12px;color:var(--dim)">${esc(c.email||'-')}</td>
+        <td style="font-size:12px">${esc((t.items?.[0]?.title||'-')).substring(0,40)}</td>
+        <td style="color:var(--green);font-weight:600;font-family:'JetBrains Mono',monospace">${fmt((t.amount||0)/100)}</td>
+        <td><span class="tag ${stClass}">${stLabel}</span></td>
+        <td>${t.status==='paid'?`<button class="btn btn-primary btn-sm" onclick="sendCRM('${escJS(t.id)}')">📤 Enviar</button>`:''}</td>
+      </tr>`;
+    }).join('') : '<tr><td colspan="8"><div class="empty-state"><div class="icon">📭</div><h3>Sem transações</h3><p>Clique em "Buscar Transações"</p></div></td></tr>';
+  } catch(e) { console.error(e); }
+}
+
+// ══════ LOGS ══════
+async function loadLogs() {
+  try {
+    const logs = await (await fetch('/api/logs')).json();
+    $('logBox').innerHTML = logs.length ? logs.map(l =>
+      `<div><span class="t">${new Date(l.time).toLocaleTimeString('pt-BR')}</span>${esc(l.msg)}</div>`
+    ).join('') : '<div style="padding:20px;text-align:center;color:var(--dim)">Sem logs ainda</div>';
+  } catch(e) {}
+}
+
+// ══════ INIT ══════
+function loadAll() { loadStats(); loadLeads(); }
+loadAll();
+</script>
+</body>
+</html>

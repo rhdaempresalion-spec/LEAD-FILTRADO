@@ -7,27 +7,39 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // ══════ ROBUST PATH DETECTION ══════
-// Tries multiple locations to find public/index.html (works on Railway, Docker, local)
+// Tries multiple locations to find index.html (works on Railway, Docker, local)
 function findPublicDir() {
-  const candidates = [
+  // First: try public/ subfolder in various locations
+  const publicCandidates = [
     path.join(__dirname, 'public'),
     path.join(process.cwd(), 'public'),
     path.join(__dirname, '..', 'public'),
     '/app/public',
   ];
-  for (const dir of candidates) {
+  for (const dir of publicCandidates) {
     if (fs.existsSync(path.join(dir, 'index.html'))) {
-      console.log(`✅ public dir found: ${dir}`);
+      console.log(`✅ public dir found (subfolder): ${dir}`);
+      return dir;
+    }
+  }
+  // Second: check if index.html is at root level (no public/ folder)
+  const rootCandidates = [
+    __dirname,
+    process.cwd(),
+    '/app',
+  ];
+  for (const dir of rootCandidates) {
+    if (fs.existsSync(path.join(dir, 'index.html'))) {
+      console.log(`✅ index.html found at root: ${dir}`);
       return dir;
     }
   }
   // Log diagnostic info if not found
-  console.error('❌ public/index.html NOT FOUND!');
+  console.error('❌ index.html NOT FOUND ANYWHERE!');
   console.error('__dirname:', __dirname);
   console.error('cwd:', process.cwd());
   console.error('Files in __dirname:', fs.existsSync(__dirname) ? fs.readdirSync(__dirname).join(', ') : 'DIR NOT FOUND');
   console.error('Files in cwd:', fs.readdirSync(process.cwd()).join(', '));
-  // Fallback to __dirname/public (will error but with clear diagnostics)
   return path.join(__dirname, 'public');
 }
 
