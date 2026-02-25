@@ -1,0 +1,8 @@
+node_modules/
+leads.db
+.env.local
+*.log
+.DS_Store
+
+# DO NOT ignore public/ — it contains the frontend!
+# !public/

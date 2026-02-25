@@ -1,9 +1,37 @@
 import express from 'express';
 import fetch from 'node-fetch';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// ══════ ROBUST PATH DETECTION ══════
+// Tries multiple locations to find public/index.html (works on Railway, Docker, local)
+function findPublicDir() {
+  const candidates = [
+    path.join(__dirname, 'public'),
+    path.join(process.cwd(), 'public'),
+    path.join(__dirname, '..', 'public'),
+    '/app/public',
+  ];
+  for (const dir of candidates) {
+    if (fs.existsSync(path.join(dir, 'index.html'))) {
+      console.log(`✅ public dir found: ${dir}`);
+      return dir;
+    }
+  }
+  // Log diagnostic info if not found
+  console.error('❌ public/index.html NOT FOUND!');
+  console.error('__dirname:', __dirname);
+  console.error('cwd:', process.cwd());
+  console.error('Files in __dirname:', fs.existsSync(__dirname) ? fs.readdirSync(__dirname).join(', ') : 'DIR NOT FOUND');
+  console.error('Files in cwd:', fs.readdirSync(process.cwd()).join(', '));
+  // Fallback to __dirname/public (will error but with clear diagnostics)
+  return path.join(__dirname, 'public');
+}
+
+const PUBLIC_DIR = findPublicDir();
 
 const PK = 'pk_WNNg2i_r8_iqeG3XrdJFI_q1I8ihd1yLoUa08Ip0LKaqxXxE';
 const SK = 'sk_jz1yyIaa0Dw2OWhMH0r16gUgWZ7N2PCpb6aK1crKPIFq02aD';
@@ -234,7 +262,7 @@ async function consultarFIPE(marca, modelo, ano) {
 // ══════ EXPRESS ══════
 const app = express();
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(PUBLIC_DIR));
 
 app.get('/api/debug', (req, res) => {
   const sample = transactions.find(t => t.status === 'paid') || transactions[0];
@@ -454,11 +482,13 @@ app.get('/health', (req, res) => res.json({ ok: true, transactions: transactions
 
 app.get('*', (req, res) => {
   if (req.path.startsWith('/api/')) return res.status(404).json({ error: 'Not found' });
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
 });
 
 app.listen(PORT, () => {
   console.log(`⚡ DHR Leads → http://localhost:${PORT}`);
+  console.log(`📂 Public dir: ${PUBLIC_DIR}`);
+  console.log(`📂 __dirname: ${__dirname}`);
+  console.log(`📂 cwd: ${process.cwd()}`);
   console.log(`🚫 Sem envio automático — apenas manual`);
-  console.log(`📍 Clique "Buscar Transações" para carregar`);
 });
