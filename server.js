@@ -98,31 +98,41 @@ function fetchWithTimeout(url, opts = {}, ms = 15000) {
 async function fetchPage(page, size) {
   const r = await fetchWithTimeout(`${API}/transactions?page=${page}&pageSize=${size}`, {
     headers: { 'Authorization': AUTH, 'Connection': 'keep-alive' },
-  }, 30000);
+  }, 60000);
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   return await r.json();
 }
 
 async function fetchAllTransactions() {
   try {
-    log('🔄 Buscando todas as transações...');
+    log('🔄 Buscando TODAS as transações (sem limite de páginas)...');
     let allTxs = [];
     const firstData = await fetchPage(1, 500);
     allTxs = firstData.data || [];
     const totalPages = firstData.pagination?.totalPages || 1;
+    const totalRecords = firstData.pagination?.totalRecords || allTxs.length;
+    log(`📊 API reporta: ${totalRecords} transações em ${totalPages} páginas`);
 
-    for (let p = 2; p <= totalPages && p <= 20; p++) {
+    // Busca TODAS as páginas sem limite
+    for (let p = 2; p <= totalPages; p++) {
       try {
         const pageData = await fetchPage(p, 500);
-        if (pageData.data?.length) allTxs = [...allTxs, ...pageData.data];
+        if (pageData.data?.length) {
+          allTxs = [...allTxs, ...pageData.data];
+        } else {
+          log(`⚠️ Página ${p} veio vazia, parando.`);
+          break;
+        }
+        // Log progresso a cada 10 páginas
+        if (p % 10 === 0) log(`📥 Progresso: ${allTxs.length} transações (página ${p}/${totalPages})`);
       } catch (e) {
-        log(`⚠️ Erro página ${p}: ${e.message}`);
+        log(`⚠️ Erro página ${p}: ${e.message} — tentando próxima...`);
       }
     }
 
     transactions = allTxs;
-    log(`✅ ${transactions.length} transações carregadas (${totalPages} páginas)`);
-    return { success: true, total: transactions.length };
+    log(`✅ ${transactions.length} transações carregadas de ${totalPages} páginas (API total: ${totalRecords})`);
+    return { success: true, total: transactions.length, apiTotal: totalRecords, pages: totalPages };
   } catch (e) {
     log(`❌ Erro: ${e.message}`);
     return { success: false, error: e.message };
@@ -363,19 +373,62 @@ app.get('/api/transactions', (req, res) => {
   let txs = [...transactions];
   const search = (req.query.search || '').toLowerCase();
   const status = req.query.status || '';
+  const crmFilter = req.query.crm || '';
+  const dateFrom = req.query.dateFrom || '';
+  const dateTo = req.query.dateTo || '';
+
+  // Status filter
   if (status === 'paid') txs = txs.filter(t => t.status === 'paid');
   else if (status === 'pending') txs = txs.filter(t => ['waiting_payment', 'pending'].includes(t.status));
+  else if (status === 'refused') txs = txs.filter(t => ['refused', 'refunded', 'chargedback', 'cancelled'].includes(t.status));
+
+  // CRM sent filter
+  if (crmFilter === 'sent') txs = txs.filter(t => sentIds.has(String(t.id)));
+  else if (crmFilter === 'not_sent') txs = txs.filter(t => !sentIds.has(String(t.id)));
+
+  // Date filter
+  if (dateFrom) {
+    const from = new Date(dateFrom);
+    from.setHours(0, 0, 0, 0);
+    txs = txs.filter(t => {
+      const d = new Date(t.createdAt || t.created_at || t.date || 0);
+      return d >= from;
+    });
+  }
+  if (dateTo) {
+    const to = new Date(dateTo);
+    to.setHours(23, 59, 59, 999);
+    txs = txs.filter(t => {
+      const d = new Date(t.createdAt || t.created_at || t.date || 0);
+      return d <= to;
+    });
+  }
+
+  // Search filter
   if (search) txs = txs.filter(t =>
     (t.customer?.name || '').toLowerCase().includes(search) ||
     (t.customer?.email || '').toLowerCase().includes(search) ||
+    (t.customer?.document?.number || '').includes(search) ||
     (t.id || '').toString().includes(search)
   );
+
+  // Sort by date desc
+  txs.sort((a, b) => new Date(b.createdAt || b.created_at || b.date || 0) - new Date(a.createdAt || a.created_at || a.date || 0));
+
   const page = parseInt(req.query.page) || 1;
-  const size = 50;
+  const size = parseInt(req.query.size) || 50;
   const start = (page - 1) * size;
+
+  // Add CRM sent flag to each transaction
+  const pageData = txs.slice(start, start + size).map(t => ({
+    ...t,
+    _crmSent: sentIds.has(String(t.id)),
+  }));
+
   res.json({
-    data: txs.slice(start, start + size),
+    data: pageData,
     pagination: { page, totalRecords: txs.length, totalPages: Math.ceil(txs.length / size) },
+    filters: { status, crm: crmFilter, dateFrom, dateTo, search },
   });
 });
 
